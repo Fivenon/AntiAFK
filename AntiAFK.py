@@ -101,8 +101,8 @@ def afk_loop():
         else: time.sleep(0.1)    
 
 #No entendi bien como hice esto
-def set_mode(mode):
-    mode.set(mode)
+def set_mode(m):
+    mode.set(m)
     update_mode_buttons()
 
 #Logica boton
@@ -120,10 +120,10 @@ def irseAFK():
 
 
 #Tkinter
-window.geometry("790x600")
+window.geometry("1024x630")
 window.title("Anti AFK")
 window.configure(bg="#121212")
-window.minsize(740, 520)
+window.minsize(1024, 620)
 
 #Main Body
 leftFrame = CTkFrame(window, corner_radius=0, fg_color="#292929")
@@ -157,15 +157,35 @@ minimal_frame = CTkFrame(rightFrame, fg_color= "transparent")
 for frame in (wasd_frame,clicker_frame,singlekey_frame,minimal_frame):
     frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-frame1 = CTkFrame(master=wasd_frame, corner_radius=14,height=200, width=300, fg_color="#292929")
-frame2 = CTkFrame(master=wasd_frame, corner_radius=14, fg_color="#292929")
+# wasd frames!
+#- Delay -
+wasdDelayFrame = CTkFrame(master=wasd_frame, corner_radius=14,height=300, width=400, fg_color="#292929")
+wasdDelayText = CTkLabel(master=wasdDelayFrame, text="Delay entre teclas", font=("Segoe UI", 22))
+wasdMinDelayEntry = CTkEntry(master=wasdDelayFrame, placeholder_text= f"Delay mínimo — por defecto {MIN_DELAY:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
+wasdMaxDelayEntry = CTkEntry(master=wasdDelayFrame, placeholder_text= f"Delay maximo — por defecto {MAX_DELAY:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
+# - Hold -
+wasdHoldFrame = CTkFrame(master=wasd_frame, corner_radius=14, height=300, width=400, fg_color="#292929")
+wasdHoldText = CTkLabel(master=wasdHoldFrame, text="Tiempo de pulsación", font=("Segoe UI", 22))
+wasdMinHoldEntry = CTkEntry(master=wasdHoldFrame, placeholder_text=f"Presión minima — por defecto {MIN_HOLD:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
+wasdMaxHoldEntry = CTkEntry(master=wasdHoldFrame, placeholder_text=F"Presión máxima — por defecto {MAX_HOLD:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
+# pack
+wasdDelayFrame.grid(row=0,column=1, padx=25, pady=10)
+wasdHoldFrame.grid(row=0,column=2, padx=25, pady=10)
+wasdDelayFrame.pack_propagate(False)
+wasdHoldFrame.pack_propagate(False)
+#-
+wasdDelayText.pack(padx=5,pady=15)
+wasdMinDelayEntry.pack(pady=30)
+wasdMaxDelayEntry.pack(pady=30)
+#-
+wasdHoldText.pack(padx=5,pady=15)
+wasdMinHoldEntry.pack(pady=30)
+wasdMaxHoldEntry.pack(pady=30)
 
 
 #Pack
 nameText.pack(side=TOP, pady=7, padx=7)
 startButton.pack(side=BOTTOM, pady=7,padx=5)
-frame1.grid(row=0,column=0, padx=10, pady=10)
-frame2.grid(row=0,column=1, padx=10, pady=10)
 selectText.pack(pady=3)
 modesFrame.pack(pady=50,padx=5)
 wasdButton.pack(pady=6)
@@ -173,7 +193,7 @@ mouseButton.pack(pady=6)
 singlekButton.pack(pady=6)
 minimalMoveButton.pack(pady=6)
 
- 
+show_frame(wasd_frame) #Para que el primer frame que aparezca sea el de WASD
 update_mode_buttons() #Para que aparezca seleccionado el WASD al abrir el programa
 threading.Thread(target=afk_loop, daemon=True).start() #Para que funcione todo junto, no se como funciona
 window.mainloop()
