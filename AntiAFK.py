@@ -158,7 +158,7 @@ for frame in (wasd_frame,clicker_frame,singlekey_frame,minimal_frame):
     frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 # - PREFABS -
-def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=400, height=400):
+def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=400, height=300):
     frame = CTkFrame(
         master=master,
         corner_radius=14,
@@ -172,7 +172,7 @@ def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=40
         text=title_text,
         font=("Segoe UI", 22)
     )
-    title. pack(pady=(10,20))
+    title.pack(pady=(10,20))
 
     entry1 = CTkEntry(master=frame, placeholder_text= entry1PHText, corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 255, height= 37, font=("Segoe UI", 13))
     entry2 = CTkEntry(master=frame, placeholder_text= entry2PHText, corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 255, height= 37, font=("Segoe UI", 13))
@@ -182,7 +182,50 @@ def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=40
 
     return frame, entry1, entry2
 
-# create frames
+def create_slider_frame(master, title_text, width=400, height=300):
+    frame =CTkFrame(
+        master=master,
+        corner_radius=14,
+        width=width,
+        height=height,
+        fg_color="#292929"    
+    )
+    frame.pack_propagate(False)
+
+    title =CTkLabel(
+        master = frame,
+        text= title_text,
+        font=("Segoe UI", 22)
+    )
+    title.pack(pady=(10,20))
+
+    sliderValue = StringVar(value= 10)
+
+    sliderText =CTkLabel(
+        master = frame,
+        textvariable = sliderValue,    # HAY QUE INDICAR QUE SON SEGUNDOS!
+        font=("Segoe UI", 19)
+    )
+    sliderText.pack(pady=5)
+    
+    def on_slider_change(v):
+        sliderValue.set(f"{float(v):.2f}")
+
+
+    slider = CTkSlider(
+        master = frame,
+        from_= 0.5,
+        to = 60,
+        width= 100,
+        height = 30,
+        command=on_slider_change
+    )
+    slider.set(10)
+    slider.pack(pady=10)
+
+    return frame, slider, sliderValue
+
+# - WASD frames -
 wasdDelayFrame, wasdDelayMin, wasdDelayMax = create_option_frame(
     master=wasd_frame, 
     title_text="Tiempo entre teclas", 
@@ -195,11 +238,22 @@ wasdHoldFrame, wasdHoldMin, wasdHoldMax = create_option_frame(
     entry1PHText=f"Hold mínimo — por defecto {MIN_HOLD:.2f}s", 
     entry2PHText=f"Hold máximo — por defecto {MAX_HOLD:.2f}s")
 
-# pack frames
+# - CLICKER frames -
+mouseClickFrame, mouseClickRate, sliderValue = create_slider_frame(
+    master=clicker_frame,
+    title_text="Click Rate"
+)
+
+# pack all option frames
 wasdDelayFrame.grid(row=0, column=0, padx=10, pady=10)
 wasdHoldFrame.grid(row=0, column=1, padx=10, pady=10)
+mouseClickFrame.grid(row=0, column=1, padx=10, pady=10)
 
-#Pack
+
+
+
+
+#Pack general things
 nameText.pack(side=TOP, pady=7, padx=7)
 startButton.pack(side=BOTTOM, pady=7,padx=5)
 selectText.pack(pady=3)
@@ -209,7 +263,7 @@ mouseButton.pack(pady=6)
 singlekButton.pack(pady=6)
 minimalMoveButton.pack(pady=6)
 
-show_frame(wasd_frame) #Para que el primer frame que aparezca sea el de WASD
+show_frame(wasd_frame) #Para que la primera TAB que aparezca sea la de WASD
 update_mode_buttons() #Para que aparezca seleccionado el WASD al abrir el programa
 threading.Thread(target=afk_loop, daemon=True).start() #Para que funcione todo junto, no se como funciona
 window.mainloop()
