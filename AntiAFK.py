@@ -71,9 +71,11 @@ def minimal_movement():
     keyboard.release(key)
     time.sleep(16)
 
+#Esta funcion tan sencilla pone arriba de todo el frame seleccionado, puto el que lee btw
 def show_frame(frame):
     frame.tkraise()
 
+#Actualiza el color de los botones
 def update_mode_buttons():
     active = "#e8890e"
     normal = "#1f6aa5"
