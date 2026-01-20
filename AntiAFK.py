@@ -157,31 +157,47 @@ minimal_frame = CTkFrame(rightFrame, fg_color= "transparent")
 for frame in (wasd_frame,clicker_frame,singlekey_frame,minimal_frame):
     frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-# wasd frames!
-#- Delay -
-wasdDelayFrame = CTkFrame(master=wasd_frame, corner_radius=14,height=300, width=400, fg_color="#292929")
-wasdDelayText = CTkLabel(master=wasdDelayFrame, text="Delay entre teclas", font=("Segoe UI", 22))
-wasdMinDelayEntry = CTkEntry(master=wasdDelayFrame, placeholder_text= f"Delay mínimo — por defecto {MIN_DELAY:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
-wasdMaxDelayEntry = CTkEntry(master=wasdDelayFrame, placeholder_text= f"Delay maximo — por defecto {MAX_DELAY:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
-# - Hold -
-wasdHoldFrame = CTkFrame(master=wasd_frame, corner_radius=14, height=300, width=400, fg_color="#292929")
-wasdHoldText = CTkLabel(master=wasdHoldFrame, text="Tiempo de pulsación", font=("Segoe UI", 22))
-wasdMinHoldEntry = CTkEntry(master=wasdHoldFrame, placeholder_text=f"Presión minima — por defecto {MIN_HOLD:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
-wasdMaxHoldEntry = CTkEntry(master=wasdHoldFrame, placeholder_text=F"Presión máxima — por defecto {MAX_HOLD:.2f}s", corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 276, height= 41, font=("Segoe UI", 15))
-# pack
-wasdDelayFrame.grid(row=0,column=1, padx=25, pady=10)
-wasdHoldFrame.grid(row=0,column=2, padx=25, pady=10)
-wasdDelayFrame.pack_propagate(False)
-wasdHoldFrame.pack_propagate(False)
-#-
-wasdDelayText.pack(padx=5,pady=15)
-wasdMinDelayEntry.pack(pady=30)
-wasdMaxDelayEntry.pack(pady=30)
-#-
-wasdHoldText.pack(padx=5,pady=15)
-wasdMinHoldEntry.pack(pady=30)
-wasdMaxHoldEntry.pack(pady=30)
+# - PREFABS -
+def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=400, height=400):
+    frame = CTkFrame(
+        master=master,
+        corner_radius=14,
+        width=width,
+        height=height,
+        fg_color="#292929"    
+    )
+    frame.pack_propagate(False)
+    title = CTkLabel(
+        master=frame,
+        text=title_text,
+        font=("Segoe UI", 22)
+    )
+    title. pack(pady=(10,20))
 
+    entry1 = CTkEntry(master=frame, placeholder_text= entry1PHText, corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 255, height= 37, font=("Segoe UI", 13))
+    entry2 = CTkEntry(master=frame, placeholder_text= entry2PHText, corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 255, height= 37, font=("Segoe UI", 13))
+
+    entry1.pack(pady=5)
+    entry2.pack(pady=5)
+
+    return frame, entry1, entry2
+
+# create frames
+wasdDelayFrame, wasdDelayMin, wasdDelayMax = create_option_frame(
+    master=wasd_frame, 
+    title_text="Tiempo entre teclas", 
+    entry1PHText=f"Delay mínimo — por defecto {MIN_DELAY:.2f}s", 
+    entry2PHText=f"Delay máximo — por defecto {MAX_DELAY:.2f}s")
+
+wasdHoldFrame, wasdHoldMin, wasdHoldMax = create_option_frame(
+    master=wasd_frame,
+    title_text="Tiempo de pulsación", 
+    entry1PHText=f"Hold mínimo — por defecto {MIN_HOLD:.2f}s", 
+    entry2PHText=f"Hold máximo — por defecto {MAX_HOLD:.2f}s")
+
+# pack frames
+wasdDelayFrame.grid(row=0, column=0, padx=10, pady=10)
+wasdHoldFrame.grid(row=0, column=1, padx=10, pady=10)
 
 #Pack
 nameText.pack(side=TOP, pady=7, padx=7)
