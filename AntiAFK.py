@@ -101,8 +101,8 @@ def afk_loop():
         else: time.sleep(0.1)    
 
 #No entendi bien como hice esto
-def set_mode(m):
-    mode.set(m)
+def set_mode(mode):
+    mode.set(mode)
     update_mode_buttons()
 
 #Logica boton
@@ -113,12 +113,10 @@ def irseAFK():
         AFK = True
         startButtonText.set("Detener")
         startButton.configure(fg_color="red", hover_color="red")
-        print("AFK")
     else:
         AFK = False
         startButtonText.set("Irse AFK")
         startButton.configure(fg_color="#1f6aa5", hover_color="#1f6aa5")
-        print("Chau AFK")
 
 
 #Tkinter
