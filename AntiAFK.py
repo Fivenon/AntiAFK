@@ -20,8 +20,6 @@ user_MIN_DELAY = 0.0
 user_MAX_DELAY = 0.0
 user_MIN_HOLD = 0.0
 user_MAX_HOLD = 0.0
-#Mouse click param
-clickWaitTime = 15
 #Single key param
 selectedKey = "space"
 keyWaitTime = 15
@@ -49,9 +47,8 @@ def wasd():
  
 def mouse_click():
         mouse = Controller()
-        time.sleep(clickWaitTime)
+        time.sleep(float(sliderValue.get()))
         mouse.click(Button.left,1)
-        print("Click hecho")
         time.sleep(0.1)
 
 
@@ -245,7 +242,6 @@ mouseClickFrame, mouseClickRate, sliderValue = create_slider_frame(
     master=clicker_frame,
     title_text="Click Rate"
 )
-
 # pack all option frames
 wasdDelayFrame.grid(row=0, column=0, padx=10, pady=10)
 wasdHoldFrame.grid(row=0, column=1, padx=10, pady=10)
