@@ -216,7 +216,7 @@ def create_slider_frame(master, title_text, width=400, height=300):
         master = frame,
         from_= 0.5,
         to = 60,
-        width= 100,
+        width= 250,
         height = 30,
         command=on_slider_change
     )
