@@ -83,7 +83,6 @@ def update_mode_buttons():
     singlekButton.configure(fg_color=active if mode.get() == "singleKey" else normal, hover_color=active if mode.get() == "singleKey" else normal)
     minimalMoveButton.configure(fg_color=active if mode.get() == "minimalMovement" else normal, hover_color=active if mode.get() == "minimalMovement" else normal)
 
-
 # "Selector" de modos :)
 def afk_loop():
     modos = {
