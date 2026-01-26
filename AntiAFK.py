@@ -31,12 +31,43 @@ startButtonText = ctk.StringVar()
 startButtonText.set("Irse AFK")
 mode = ctk.StringVar(value="wasd")
 AFK = False
+#-----------------------------------------------
+
+def safe_float(x, default):
+    try:
+        if x is None or x == "":
+            return default
+        return float(x)
+    except Exception:
+        return default
+
+def apply_wasd_user_values():
+    global new_MIN_DELAY, new_MAX_DELAY, new_MIN_HOLD, new_MAX_HOLD
+    user_MIN_DELAY = wasdDelayMin.get()
+    user_MAX_DELAY = wasdDelayMax.get()
+    user_MIN_HOLD = wasdHoldMin.get()
+    user_MAX_HOLD = wasdHoldMax.get()
+
+    new_MIN_DELAY = safe_float(user_MIN_DELAY, MIN_DELAY)
+    new_MAX_DELAY = safe_float(user_MAX_DELAY, MAX_DELAY)
+    new_MIN_HOLD = safe_float(user_MIN_HOLD, MIN_HOLD)
+    new_MAX_HOLD = safe_float(user_MAX_HOLD, MAX_HOLD)
+
+    # Validaciones básicas: min <= max
+    if new_MIN_DELAY > new_MAX_DELAY:
+        # swap or correct: aca decido intercambiar para que tenga sentido
+        new_MIN_DELAY, new_MAX_DELAY = new_MAX_DELAY, new_MIN_DELAY
+
+    if new_MIN_HOLD > new_MAX_HOLD:
+        new_MIN_HOLD, new_MAX_HOLD = new_MAX_HOLD, new_MIN_HOLD
+
 
 #Logica de los diferentes modos aca
 def wasd():
+    apply_wasd_user_values()
     key = random.choice(wasdKeys)
-    hold = random.uniform(MIN_HOLD,MAX_HOLD)  #Este hay que cambiarlo pa que el usuario pueda elegir
-    intervalo = random.uniform(MIN_DELAY,MAX_DELAY) #Este lo mismo
+    hold = random.uniform(new_MIN_HOLD,new_MAX_HOLD)  #Este hay que cambiarlo pa que el usuario pueda elegir EN PROGRESO
+    intervalo = random.uniform(new_MIN_DELAY,new_MAX_DELAY) #Este lo mismo
     time.sleep(intervalo)
     print (f"Tecla {key} presionada por {hold:.2f} segundos.")
     keyboard.press(key)
@@ -236,6 +267,8 @@ wasdHoldFrame, wasdHoldMin, wasdHoldMax = create_option_frame(
     title_text="Tiempo de pulsación", 
     entry1PHText=f"Hold mínimo — por defecto {MIN_HOLD:.2f}s", 
     entry2PHText=f"Hold máximo — por defecto {MAX_HOLD:.2f}s")
+
+
 
 # - CLICKER frames -
 mouseClickFrame, mouseClickRate, sliderValue = create_slider_frame(
