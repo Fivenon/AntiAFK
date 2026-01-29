@@ -10,6 +10,7 @@ from customtkinter import *
 import threading
 
 #TESTTESTTEST
+#TEST2
 #Valores default
 MIN_DELAY = 8.1
 MAX_DELAY = 38.2
