@@ -9,7 +9,6 @@ import customtkinter as ctk
 from customtkinter import *
 import threading
 
-#testAgain!
 #Valores default
 MIN_DELAY = 8.1
 MAX_DELAY = 38.2
@@ -105,8 +104,8 @@ def show_frame(frame):
 
 #Actualiza el color de los botones
 def update_mode_buttons():
-    active = "#e8890e"
-    normal = "#1f6aa5"
+    active = "#002945"
+    normal = "#001523"
     #Muchos IFs ¿Se podra mejorar?
     wasdButton.configure(fg_color=active if mode.get() == "wasd" else normal, hover_color=active if mode.get() == "wasd" else normal)
     mouseButton.configure(fg_color=active if mode.get() == "mouseClick" else normal, hover_color=active if mode.get() == "mouseClick" else normal)
@@ -139,25 +138,26 @@ def set_mode(m):
 def irseAFK():
     global AFK
     global startButtonText
+    global startButton
     if not AFK:
         AFK = True
         startButtonText.set("Detener")
-        startButton.configure(fg_color="red", hover_color="red")
+        startButton.configure(fg_color="#FF0000", hover_color="#FF0000")
     else:
         AFK = False
         startButtonText.set("Irse AFK")
-        startButton.configure(fg_color="#1f6aa5", hover_color="#1f6aa5")
+        startButton.configure(fg_color="#386641", hover_color="#386641")
 
 
 #Tkinter
 window.geometry("1170x630")
 window.title("Anti AFK")
-window.configure(bg="#121212")
+window.configure(bg="#001523")
 window.minsize(1170, 620)
 
 #Main Body
-leftFrame = CTkFrame(window, corner_radius=0, fg_color="#292929")
-rightFrame = CTkFrame(window,corner_radius=0,  fg_color="transparent")
+leftFrame = CTkFrame(window, corner_radius=0, fg_color="#001A2C")
+rightFrame = CTkFrame(window,corner_radius=0,  fg_color="#001523",bg_color="#001523")
 window.columnconfigure(0, minsize=330)
 window.columnconfigure(1, weight=1)
 window.rowconfigure(0,weight=1)
@@ -169,20 +169,20 @@ leftFrame.propagate(False)
 
 #LeftContent
 nameText = CTkLabel(master=leftFrame, text="AntiAFK", font=("Segoe UI", 30))
-modesFrame =CTkFrame(master=leftFrame, fg_color="transparent")
+modesFrame =CTkFrame(master=leftFrame, fg_color="#001A2C", bg_color="#001A2C")
 selectText= CTkLabel(master=modesFrame, text="Select a mode", font=("Segoe UI", 22))
-wasdButton = CTkButton(master=modesFrame, text="Movement", command= lambda: (set_mode("wasd"), show_frame(wasd_frame)), height=30, width=330, font=("Segoe UI", 22))
-mouseButton = CTkButton(master=modesFrame, text="Clicker", command= lambda: (set_mode("mouseClick"), show_frame(clicker_frame)), height=30, width=330, font=("Segoe UI", 22)) 
-singlekButton = CTkButton(master=modesFrame, text="Single Key", command= lambda: (set_mode("singleKey"), show_frame(singlekey_frame)), height=30, width=330, font=("Segoe UI", 22))
-minimalMoveButton = CTkButton(master=modesFrame, text="Minimal Movement", command= lambda: (set_mode("minimalMovement"), show_frame(minimal_frame)), height=30, width=330, font=("Segoe UI", 22))
+wasdButton = CTkButton(master=modesFrame, text="Movement", command= lambda: (set_mode("wasd"), show_frame(wasd_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
+mouseButton = CTkButton(master=modesFrame, text="Clicker", command= lambda: (set_mode("mouseClick"), show_frame(clicker_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent") 
+singlekButton = CTkButton(master=modesFrame, text="Single Key", command= lambda: (set_mode("singleKey"), show_frame(singlekey_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
+minimalMoveButton = CTkButton(master=modesFrame, text="Minimal Movement", command= lambda: (set_mode("minimalMovement"), show_frame(minimal_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
 
-startButton = CTkButton(master=leftFrame, textvariable=startButtonText, command=irseAFK, height=45, width=330, fg_color= "#1f6aa5", hover_color="#1f6aa5",font=("Segoe UI", 22))
+startButton = CTkButton(master=leftFrame, textvariable=startButtonText, command=irseAFK, height=45, width=330, fg_color="#386641", hover_color="#386641",font=("Segoe UI", 22))
 
 #rightContent
-wasd_frame = CTkFrame(rightFrame, fg_color= "transparent")
-clicker_frame = CTkFrame(rightFrame, fg_color= "transparent")
-singlekey_frame = CTkFrame(rightFrame, fg_color= "transparent")
-minimal_frame = CTkFrame(rightFrame, fg_color= "transparent")
+wasd_frame = CTkFrame(rightFrame, fg_color= "transparent", bg_color="transparent")
+clicker_frame = CTkFrame(rightFrame, fg_color= "transparent", bg_color="transparent")
+singlekey_frame = CTkFrame(rightFrame, fg_color= "transparent", bg_color="transparent")
+minimal_frame = CTkFrame(rightFrame, fg_color= "transparent", bg_color="transparent")
 
 for frame in (wasd_frame,clicker_frame,singlekey_frame,minimal_frame):
     frame.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -194,7 +194,8 @@ def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=40
         corner_radius=14,
         width=width,
         height=height,
-        fg_color="#292929"    
+        fg_color="#001A2C",
+        bg_color="transparent"    
     )
     frame.pack_propagate(False)
     title = CTkLabel(
@@ -218,7 +219,7 @@ def create_slider_frame(master, title_text, width=400, height=300):
         corner_radius=14,
         width=width,
         height=height,
-        fg_color="#292929"    
+        fg_color="#001A2C"    
     )
     frame.pack_propagate(False)
 
