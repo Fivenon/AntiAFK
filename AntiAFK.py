@@ -9,7 +9,7 @@ import customtkinter as ctk
 from customtkinter import *
 import threading
 
-
+#TESTTESTTEST
 #Valores default
 MIN_DELAY = 8.1
 MAX_DELAY = 38.2
