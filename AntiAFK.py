@@ -150,10 +150,10 @@ def irseAFK():
 
 
 #Tkinter
-window.geometry("1024x630")
+window.geometry("1170x630")
 window.title("Anti AFK")
 window.configure(bg="#121212")
-window.minsize(1024, 620)
+window.minsize(1170, 620)
 
 #Main Body
 leftFrame = CTkFrame(window, corner_radius=0, fg_color="#292929")
