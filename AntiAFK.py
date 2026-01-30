@@ -10,7 +10,7 @@ from customtkinter import *
 import threading
 
 window = ctk.CTk()
-
+window.iconbitmap("assets\AntiAFK_Icon.ico")
 #Valores default
 MIN_DELAY, sk_MIN_DELAY = 8.1, 5.2
 MAX_DELAY, sk_MAX_DELAY = 38.2, 26.1
