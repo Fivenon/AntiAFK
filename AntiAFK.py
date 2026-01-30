@@ -8,6 +8,7 @@ from tkinter.font import Font
 import customtkinter as ctk
 from customtkinter import *
 import threading
+from PIL import Image
 
 window = ctk.CTk()
 #Valores default
@@ -29,7 +30,7 @@ keyWaitTime = 15
 wasdKeys = ["w","a","s","d"]
 #------------------------------
 startButtonText = ctk.StringVar()
-startButtonText.set("Irse AFK")
+startButtonText.set("Go AFK")
 mode = ctk.StringVar(value="wasd")
 AFK = False
 #COLORS
@@ -53,8 +54,22 @@ def resource_path(relative_path):
 window.iconbitmap(resource_path("assets/AntiAFK_Icon.ico"))
 # -
 
+def only_float(value):
+    # SI EL VALOR ES VACÍO, permitimos (esto hace que el placeholder sea visible)
+    if value == "":
+        return True
+    
+    # Permitir caracteres iniciales para poder escribir el número
+    if value in ["."]:
+        return True
+        
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
-
+#?
 def safe_float(x, default):
     try:
         if x is None or x == "":
@@ -254,18 +269,22 @@ def irseAFK():
     global startButton
     if not AFK:
         AFK = True
-        startButtonText.set("Detener")
+        startButtonText.set("Stop")
         startButton.configure(
-            fg_color=startButtonColorON, 
+            fg_color=startButtonColorON,
+            border_color="#FF4D4D",
+            border_width=2, 
             text_color=startButtonTextColorON,
             hover_color=startButtonColorON
         )
     else:
         AFK = False
-        startButtonText.set("Irse AFK")
+        startButtonText.set("Go AFK")
         startButton.configure(
             fg_color=startButtonColorOFF, 
             text_color=startButtonTextColorOFF,
+            border_color="#269B53",
+            border_width=2,
             hover_color=startButtonColorOFF
         )
 
@@ -289,15 +308,15 @@ leftFrame.propagate(False)
 
 
 #LeftContent
-nameText = CTkLabel(master=leftFrame, text="AntiAFK", font=("Segoe UI", 30))
+nameText = CTkLabel(master=leftFrame, text="AntiAFK", font=("Segoe UI", 38))
 modesFrame =CTkFrame(master=leftFrame, fg_color=Panels, bg_color=Panels)
-selectText= CTkLabel(master=modesFrame, text="Select a mode", font=("Segoe UI", 22))
+selectText= CTkLabel(master=modesFrame, text="Select a mode", font=("Segoe UI", 22, "bold"))
 wasdButton = CTkButton(master=modesFrame, text="Movement", command= lambda: (set_mode("wasd"), show_frame(wasd_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
 mouseButton = CTkButton(master=modesFrame, text="Clicker", command= lambda: (set_mode("mouseClick"), show_frame(clicker_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent") 
 singlekButton = CTkButton(master=modesFrame, text="Single Key", command= lambda: (set_mode("singleKey"), show_frame(singlekey_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
 minimalMoveButton = CTkButton(master=modesFrame, text="Minimal Movement", command= lambda: (set_mode("minimalMovement"), show_frame(minimal_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
 
-startButton = CTkButton(master=leftFrame, textvariable=startButtonText, command=irseAFK, height=45, width=330, fg_color="#386641", hover_color="#386641",font=("Segoe UI", 22))
+startButton = CTkButton(master=leftFrame, textvariable=startButtonText, command=irseAFK, height=45, width=330, fg_color=startButtonColorOFF, hover_color=startButtonColorOFF,border_color="#269B53",border_width=2,font=("Segoe UI", 22))
 
 #rightContent
 wasd_frame = CTkFrame(rightFrame, fg_color= "transparent", bg_color="transparent")
@@ -307,6 +326,8 @@ minimal_frame = CTkFrame(rightFrame, fg_color= "transparent", bg_color="transpar
 
 for frame in (wasd_frame,clicker_frame,singlekey_frame,minimal_frame):
     frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+info_icon = ctk.CTkImage(Image.open(resource_path("assets/info_icon.png")),size=(20,20))
 
 # - PREFABS -
 def create_info_frame(master, text):
@@ -318,15 +339,24 @@ def create_info_frame(master, text):
     )
     frame.pack_propagate(True)
     
+    iconLabel =CTkLabel(
+        master=frame,
+        text="",
+        image=info_icon,
+        width=5,
+        
+    )
+    iconLabel.pack(side="left",padx=(20,0), pady=(15), anchor="n")
+    
     infoText = CTkLabel(
         master=frame,
         text=text,
-        wraplength=800,
+        wraplength=780,
         justify="left",
         anchor="w",           
-        font=("Segoe UI", 22)
+        font=("Segoe UI", 18)
     )
-    infoText.pack(pady=(10,20), fill="x",padx=20)
+    infoText.pack(pady=15, fill="x",padx=(10,20))
     return frame
 
 def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=400, height=300):
@@ -346,9 +376,13 @@ def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=40
     )
     title.pack(pady=(10,20))
 
+    vcmd = (window.register(only_float), "%P")
+    
     entry1 = CTkEntry(master=frame, placeholder_text= entry1PHText, corner_radius=25, text_color="#E6F1FF",placeholder_text_color="#8FA8BF", fg_color="#0E3557",border_color="#1A3E5F", width= 255, height= 37, font=("Segoe UI", 13))
     entry2 = CTkEntry(master=frame, placeholder_text= entry2PHText, corner_radius=25, text_color="#E6F1FF",placeholder_text_color="#8FA8BF", fg_color="#0E3557",border_color="#1A3E5F", width= 255, height= 37, font=("Segoe UI", 13))
-
+    entry1.configure(validate="key", validatecommand=vcmd)
+    entry2.configure(validate="key", validatecommand=vcmd)
+    
     entry1.pack(pady=5)
     entry2.pack(pady=5)
 
@@ -511,9 +545,9 @@ minimal_frame.columnconfigure(1, weight=1)
 
 
 #Pack general things
-nameText.pack(side=TOP, pady=7, padx=7)
+nameText.pack(side=TOP, pady=(20,1), padx=7)
 startButton.pack(side=BOTTOM, pady=7,padx=5)
-selectText.pack(pady=3)
+selectText.pack(pady=(1,3))
 modesFrame.pack(pady=50,padx=5)
 wasdButton.pack(pady=6)
 mouseButton.pack(pady=6)
