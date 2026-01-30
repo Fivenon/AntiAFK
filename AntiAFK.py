@@ -30,6 +30,14 @@ startButtonText = ctk.StringVar()
 startButtonText.set("Irse AFK")
 mode = ctk.StringVar(value="wasd")
 AFK = False
+#COLORS
+Fondo = "#071C2F"
+Panels = "#0B2A45"
+Texto = " #C7D6E5"
+BotonActivo = "#1F6AE1"
+BotonInactivo = "#0B2A45"
+startButtonColorOFF, startButtonTextColorOFF = "#1E7F43", "#E9FFF1"
+startButtonColorON, startButtonTextColorON = "#9B2C2C", "#FFECEC"
 #-----------------------------------------------
 
 def safe_float(x, default):
@@ -104,13 +112,34 @@ def show_frame(frame):
 
 #Actualiza el color de los botones
 def update_mode_buttons():
-    active = "#002945"
-    normal = "#001523"
+    active = BotonActivo
+    normal = BotonInactivo
     #Muchos IFs ¿Se podra mejorar?
-    wasdButton.configure(fg_color=active if mode.get() == "wasd" else normal, hover_color=active if mode.get() == "wasd" else normal)
-    mouseButton.configure(fg_color=active if mode.get() == "mouseClick" else normal, hover_color=active if mode.get() == "mouseClick" else normal)
-    singlekButton.configure(fg_color=active if mode.get() == "singleKey" else normal, hover_color=active if mode.get() == "singleKey" else normal)
-    minimalMoveButton.configure(fg_color=active if mode.get() == "minimalMovement" else normal, hover_color=active if mode.get() == "minimalMovement" else normal)
+    wasdButton.configure(
+        fg_color=active if mode.get() == "wasd" else normal,
+        hover_color=active if mode.get() == "wasd" else normal,
+        border_color="#3A8DFF",
+        border_width=2 if mode.get() == "wasd" else 0
+    )
+    mouseButton.configure(
+        fg_color=active if mode.get() == "mouseClick" else normal,
+        hover_color=active if mode.get() == "mouseClick" else normal,
+        border_color="#3A8DFF",
+        border_width=2 if mode.get() == "mouseClick" else 0
+    )
+    singlekButton.configure(
+        fg_color=active if mode.get() == "singleKey" else normal,
+        hover_color=active if mode.get() == "singleKey" else normal,
+        border_color="#3A8DFF",
+        border_width=2 if mode.get() == "singleKey" else 0
+    )
+    minimalMoveButton.configure(
+        fg_color=active if mode.get() == "minimalMovement" else normal,
+        hover_color=active if mode.get() == "minimalMovement" else normal,
+        border_color="#3A8DFF",
+        border_width=2 if mode.get() == "minimalMovement" else 0
+    )
+
 
 # "Selector" de modos :)
 def afk_loop():
@@ -142,22 +171,30 @@ def irseAFK():
     if not AFK:
         AFK = True
         startButtonText.set("Detener")
-        startButton.configure(fg_color="#FF0000", hover_color="#FF0000")
+        startButton.configure(
+            fg_color=startButtonColorON, 
+            text_color=startButtonTextColorON,
+            hover_color=startButtonColorON
+        )
     else:
         AFK = False
         startButtonText.set("Irse AFK")
-        startButton.configure(fg_color="#386641", hover_color="#386641")
+        startButton.configure(
+            fg_color=startButtonColorOFF, 
+            text_color=startButtonTextColorOFF,
+            hover_color=startButtonColorOFF
+        )
 
 
 #Tkinter
 window.geometry("1170x630")
 window.title("Anti AFK")
-window.configure(bg="#001523")
+window.configure(bg=Fondo)
 window.minsize(1170, 620)
 
 #Main Body
-leftFrame = CTkFrame(window, corner_radius=0, fg_color="#001A2C")
-rightFrame = CTkFrame(window,corner_radius=0,  fg_color="#001523",bg_color="#001523")
+leftFrame = CTkFrame(window, corner_radius=0, fg_color=Panels)
+rightFrame = CTkFrame(window,corner_radius=0,  fg_color=Fondo,bg_color=Fondo)
 window.columnconfigure(0, minsize=330)
 window.columnconfigure(1, weight=1)
 window.rowconfigure(0,weight=1)
@@ -169,7 +206,7 @@ leftFrame.propagate(False)
 
 #LeftContent
 nameText = CTkLabel(master=leftFrame, text="AntiAFK", font=("Segoe UI", 30))
-modesFrame =CTkFrame(master=leftFrame, fg_color="#001A2C", bg_color="#001A2C")
+modesFrame =CTkFrame(master=leftFrame, fg_color=Panels, bg_color=Panels)
 selectText= CTkLabel(master=modesFrame, text="Select a mode", font=("Segoe UI", 22))
 wasdButton = CTkButton(master=modesFrame, text="Movement", command= lambda: (set_mode("wasd"), show_frame(wasd_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent")
 mouseButton = CTkButton(master=modesFrame, text="Clicker", command= lambda: (set_mode("mouseClick"), show_frame(clicker_frame)), height=30, width=330, font=("Segoe UI", 22), fg_color="#1C3A69", bg_color="transparent") 
@@ -194,7 +231,7 @@ def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=40
         corner_radius=14,
         width=width,
         height=height,
-        fg_color="#001A2C",
+        fg_color=Panels,
         bg_color="transparent"    
     )
     frame.pack_propagate(False)
@@ -205,8 +242,8 @@ def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=40
     )
     title.pack(pady=(10,20))
 
-    entry1 = CTkEntry(master=frame, placeholder_text= entry1PHText, corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 255, height= 37, font=("Segoe UI", 13))
-    entry2 = CTkEntry(master=frame, placeholder_text= entry2PHText, corner_radius=25, text_color="#EC8B0D",placeholder_text_color="#717171", fg_color="#121212",border_color="#121212", width= 255, height= 37, font=("Segoe UI", 13))
+    entry1 = CTkEntry(master=frame, placeholder_text= entry1PHText, corner_radius=25, text_color="#E6F1FF",placeholder_text_color="#8FA8BF", fg_color="#0E3557",border_color="#1A3E5F", width= 255, height= 37, font=("Segoe UI", 13))
+    entry2 = CTkEntry(master=frame, placeholder_text= entry2PHText, corner_radius=25, text_color="#E6F1FF",placeholder_text_color="#8FA8BF", fg_color="#0E3557",border_color="#1A3E5F", width= 255, height= 37, font=("Segoe UI", 13))
 
     entry1.pack(pady=5)
     entry2.pack(pady=5)
@@ -219,7 +256,7 @@ def create_slider_frame(master, title_text, width=400, height=300):
         corner_radius=14,
         width=width,
         height=height,
-        fg_color="#001A2C"    
+        fg_color=Panels    
     )
     frame.pack_propagate(False)
 
@@ -249,6 +286,7 @@ def create_slider_frame(master, title_text, width=400, height=300):
         to = 60,
         width= 250,
         height = 30,
+        button_color=Panels,
         command=on_slider_change
     )
     slider.set(10)
