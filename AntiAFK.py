@@ -9,23 +9,26 @@ import customtkinter as ctk
 from customtkinter import *
 import threading
 
+window = ctk.CTk()
+
 #Valores default
-MIN_DELAY = 8.1
-MAX_DELAY = 38.2
+MIN_DELAY, sk_MIN_DELAY = 8.1, 5.2
+MAX_DELAY, sk_MAX_DELAY = 38.2, 26.1
 MIN_HOLD = 0.4
 MAX_HOLD = 0.7
 #Valores elegidos por usuario
-user_MIN_DELAY = 0.0
-user_MAX_DELAY = 0.0
+user_MIN_DELAY, sk_user_MIN_DELAY = 0.0, 0.0
+user_MAX_DELAY, sk_user_MAX_DELAY = 0.0, 0.0
 user_MIN_HOLD = 0.0
 user_MAX_HOLD = 0.0
 #Single key param
-selectedKey = "space"
+recordingKey = False
+selectedKey = ctk.StringVar(master=window, value="space")
+text_selectedKey = ctk.StringVar(master=window, value=f"Selected key: {selectedKey.get().upper()}")
 keyWaitTime = 15
 #Teclas aceptadas
 wasdKeys = ["w","a","s","d"]
 #------------------------------
-window = ctk.CTk()
 startButtonText = ctk.StringVar()
 startButtonText.set("Irse AFK")
 mode = ctk.StringVar(value="wasd")
@@ -67,6 +70,20 @@ def apply_wasd_user_values():
 
     if new_MIN_HOLD > new_MAX_HOLD:
         new_MIN_HOLD, new_MAX_HOLD = new_MAX_HOLD, new_MIN_HOLD
+        
+def apply_singleKey_user_values():
+    global sk_new_MIN_DELAY, sk_new_MAX_DELAY
+
+    sk_user_MIN_DELAY = singleKeyDelayMin.get()
+    sk_user_MAX_DELAY = singleKeyDelayMax.get()
+
+    sk_new_MIN_DELAY = safe_float(sk_user_MIN_DELAY, sk_MIN_DELAY)
+    sk_new_MAX_DELAY = safe_float(sk_user_MAX_DELAY, sk_MAX_DELAY)
+
+    if sk_new_MIN_DELAY > sk_new_MAX_DELAY:
+        sk_new_MIN_DELAY, sk_new_MAX_DELAY = sk_new_MAX_DELAY, sk_new_MIN_DELAY
+
+       
 
 
 #Logica de los diferentes modos aca
@@ -91,10 +108,12 @@ def mouse_click():
 
 
 def single_key():
-    key = selectedKey
+    apply_singleKey_user_values()
+    key = selectedKey.get()
+    keyWaitTime = random.uniform(sk_new_MIN_DELAY, sk_new_MAX_DELAY)
     time.sleep(keyWaitTime)
     keyboard.press(key)
-    time.sleep(0.8)
+    time.sleep(0.5)
     keyboard.release(key)
     
 
@@ -140,6 +159,59 @@ def update_mode_buttons():
         border_width=2 if mode.get() == "minimalMovement" else 0
     )
 
+#Para grabar la tecla en el modo SingleKey
+def on_key_press(key):
+    global recordingKey
+
+    if key == Key.esc:
+        text_selectedKey.set("Selected key: CANCELLED")
+        recordingKey = False
+        recordButton.configure(
+           text="Click to record a key",
+            fg_color="#1C3A69",
+            hover_color="#255AA8",
+            state="normal"
+        )
+        return False
+
+    try:
+        k = key.char
+    except AttributeError:
+        k = str(key).replace("Key.", "")
+
+    selectedKey.set(k)
+    text_selectedKey.set(f"Selected key: {k.upper()}")
+    recordingKey = False
+    
+    recordButton.configure(
+        text="Click to record a key",
+        fg_color=BotonActivo,
+        border_color="#3A8DFF",
+        border_width=2,
+        hover_color="#255AA8",
+        state="normal"
+    )
+    return False
+def recordKey():
+    global recordingKey
+
+    if recordingKey:
+        
+        return
+
+    recordingKey = True
+    text_selectedKey.set("Press a key...")
+
+    recordButton.configure(
+        text="Recording...",
+        fg_color="#9B2C2C",
+        border_color="#C74A4A",
+        border_width=2,
+        hover_color="#9B2C2C",
+        state="disabled"
+    )
+    
+    Listener(on_press=on_key_press).start()
 
 # "Selector" de modos :)
 def afk_loop():
@@ -155,8 +227,8 @@ def afk_loop():
             modo_actual = mode.get()
             if modo_actual in modos:
                 modos[modo_actual]()
-            else: time.sleep(0.1)
-        else: time.sleep(0.1)    
+            else: time.sleep(0.2)
+        else: time.sleep(0.2)    
 
 #No entendi bien como hice esto
 def set_mode(m):
@@ -225,6 +297,26 @@ for frame in (wasd_frame,clicker_frame,singlekey_frame,minimal_frame):
     frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 # - PREFABS -
+def create_info_frame(master, text):
+    frame =CTkFrame(
+        master=master,
+        corner_radius=14,
+        fg_color=Panels,
+        bg_color="transparent"
+    )
+    frame.pack_propagate(True)
+    
+    infoText = CTkLabel(
+        master=frame,
+        text=text,
+        wraplength=800,
+        justify="left",
+        anchor="w",           
+        font=("Segoe UI", 22)
+    )
+    infoText.pack(pady=(10,20), fill="x",padx=20)
+    return frame
+
 def create_option_frame(master, title_text, entry1PHText, entry2PHText, width=400, height=300):
     frame = CTkFrame(
         master=master,
@@ -286,7 +378,7 @@ def create_slider_frame(master, title_text, width=400, height=300):
         to = 60,
         width= 250,
         height = 30,
-        button_color=Panels,
+        button_color=BotonActivo,
         command=on_slider_change
     )
     slider.set(10)
@@ -294,32 +386,115 @@ def create_slider_frame(master, title_text, width=400, height=300):
 
     return frame, slider, sliderValue
 
+def create_recordKey_Frame(master, title_text, comando, width=400, height=300):
+    frame =CTkFrame(
+        master=master,
+        corner_radius=14,
+        width=width,
+        height=height,
+        fg_color=Panels    
+    )
+    frame.pack_propagate(False)
+    
+    title = CTkLabel(
+        master = frame,
+        text= title_text,
+        font=("Segoe UI", 22)
+    )
+    title.pack(pady=(10,20))
+    
+    recordButton = CTkButton(
+        master= frame,
+        text="Click to record a key",
+        fg_color=BotonActivo,
+        border_color="#3A8DFF",
+        border_width=2,
+        hover_color="#255AA8",
+        width= 280,
+        height = 100,
+        command= comando
+    )
+    recordButton.pack(pady=(40,20))
+    
+    actualKeyText = CTkLabel(
+        master=frame,
+        textvariable = text_selectedKey
+    )
+    actualKeyText.pack()
+    return frame, recordButton
+    
+
 # - WASD frames -
+wasdInfoText = create_info_frame(
+    master=wasd_frame,
+    text="This mode press WASD keys randomly to move the character.\nYou can modify the delay from key to key and how much time that key is gonna be pressed."
+)
 wasdDelayFrame, wasdDelayMin, wasdDelayMax = create_option_frame(
     master=wasd_frame, 
-    title_text="Tiempo entre teclas", 
-    entry1PHText=f"Delay mínimo — por defecto {MIN_DELAY:.2f}s", 
-    entry2PHText=f"Delay máximo — por defecto {MAX_DELAY:.2f}s")
-
+    title_text="Time between keys", 
+    entry1PHText=f"Minimum delay — by default: {MIN_DELAY:.2f}s", 
+    entry2PHText=f"Maximum delay — by default: {MAX_DELAY:.2f}s")
 wasdHoldFrame, wasdHoldMin, wasdHoldMax = create_option_frame(
     master=wasd_frame,
-    title_text="Tiempo de pulsación", 
-    entry1PHText=f"Hold mínimo — por defecto {MIN_HOLD:.2f}s", 
-    entry2PHText=f"Hold máximo — por defecto {MAX_HOLD:.2f}s")
-
-
+    title_text="Time between pulsations", 
+    entry1PHText=f"Minimun hold — by default: {MIN_HOLD:.2f}s", 
+    entry2PHText=f"Maximum hold — by default: {MAX_HOLD:.2f}s")
 
 # - CLICKER frames -
+clickerInfoText = create_info_frame(
+    master=clicker_frame,
+    text="This mode automatically clicks the left mouse button.\nYou can configure the time between clicks with the slider."
+)
 mouseClickFrame, mouseClickRate, sliderValue = create_slider_frame(
     master=clicker_frame,
     title_text="Click Rate"
 )
+# - SingleKey frames -
+singleKeyInfoText = create_info_frame(
+    master=singlekey_frame,
+    text="This mode repeatedly presses a single key selected by the user.\nYou can configure the delay between presses.\n\nUseful for actions that require repeated input."
+)
+recordKeyFrame, recordButton = create_recordKey_Frame(
+    master=singlekey_frame,
+    title_text= "Key selection",
+    comando= recordKey
+    )
+singleKeyOptionFrame, singleKeyDelayMin, singleKeyDelayMax= create_option_frame(
+    master=singlekey_frame,
+    title_text="Time between keys",
+    entry1PHText=f"Minimum delay — by default: {sk_MIN_DELAY:.2f}s", 
+    entry2PHText=f"Maximum delay — by default: {sk_MAX_DELAY:.2f}s"
+)
+# - MinimalMovement frames -
+minimalMovementInfoText = create_info_frame(
+    master=minimal_frame,
+    text="This mode performs minimal and subtle movements to prevent AFK detection.\nIt is designed to be less noticeable while keeping the session active.\n\nIdeal for situations where minimal input is required to stay active."
+)
+warningText = create_info_frame(master=minimal_frame, text="There is no configuration available at the moment.")
+
 # pack all option frames
-wasdDelayFrame.grid(row=0, column=0, padx=10, pady=10)
-wasdHoldFrame.grid(row=0, column=1, padx=10, pady=10)
-mouseClickFrame.grid(row=0, column=1, padx=10, pady=10)
-
-
+#-
+wasdInfoText.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+wasdDelayFrame.grid(row=1, column=0, sticky="nw", padx=10, pady=10)
+wasdHoldFrame.grid(row=1, column=1, sticky="nw", padx=10, pady=10)
+wasd_frame.columnconfigure(0, weight=0)
+wasd_frame.columnconfigure(1, weight=1)
+#-
+clickerInfoText.grid(row=0, column=0,columnspan=2, sticky="ew", padx=10, pady=10)
+mouseClickFrame.grid(row=1, column=0, sticky="nw", padx=10, pady=10)
+clicker_frame.columnconfigure(0,weight=0)
+clicker_frame.columnconfigure(1, weight=1)
+#-
+singleKeyInfoText.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+recordKeyFrame.grid(row=1, column=0, sticky="nw", padx=10, pady=10)
+singleKeyOptionFrame.grid(row=1, column=1, sticky="nw", padx=10, pady=10)
+singlekey_frame.columnconfigure(0, weight=0)
+singlekey_frame.columnconfigure(1, weight=1)
+#-
+minimalMovementInfoText.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
+warningText.grid(row=1, column=0, sticky="nw", padx=10, pady=10)
+minimal_frame.columnconfigure(0,weight=0)
+minimal_frame.columnconfigure(1, weight=1)
 
 
 
