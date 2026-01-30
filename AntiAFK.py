@@ -482,7 +482,7 @@ wasdDelayFrame, wasdDelayMin, wasdDelayMax = create_option_frame(
     entry2PHText=f"Maximum delay — by default: {MAX_DELAY:.2f}s")
 wasdHoldFrame, wasdHoldMin, wasdHoldMax = create_option_frame(
     master=wasd_frame,
-    title_text="Time between pulsations", 
+    title_text="Time holding the key", 
     entry1PHText=f"Minimun hold — by default: {MIN_HOLD:.2f}s", 
     entry2PHText=f"Maximum hold — by default: {MAX_HOLD:.2f}s")
 
@@ -507,7 +507,7 @@ recordKeyFrame, recordButton = create_recordKey_Frame(
     )
 singleKeyOptionFrame, singleKeyDelayMin, singleKeyDelayMax= create_option_frame(
     master=singlekey_frame,
-    title_text="Time between keys",
+    title_text="Time between presses",
     entry1PHText=f"Minimum delay — by default: {sk_MIN_DELAY:.2f}s", 
     entry2PHText=f"Maximum delay — by default: {sk_MAX_DELAY:.2f}s"
 )
