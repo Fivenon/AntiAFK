@@ -10,7 +10,6 @@ from customtkinter import *
 import threading
 
 window = ctk.CTk()
-window.iconbitmap("assets\AntiAFK_Icon.ico")
 #Valores default
 MIN_DELAY, sk_MIN_DELAY = 8.1, 5.2
 MAX_DELAY, sk_MAX_DELAY = 38.2, 26.1
@@ -42,6 +41,19 @@ BotonInactivo = "#0B2A45"
 startButtonColorOFF, startButtonTextColorOFF = "#1E7F43", "#E9FFF1"
 startButtonColorON, startButtonTextColorON = "#9B2C2C", "#FFECEC"
 #-----------------------------------------------
+
+#PARA EL ICONO
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS  # PyInstaller temp folder
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+window.iconbitmap(resource_path("assets/AntiAFK_Icon.ico"))
+# -
+
+
 
 def safe_float(x, default):
     try:
