@@ -10,6 +10,7 @@ AntiAFK is a desktop application designed to prevent AFK detection in games and 
 
 ## 🖥️ Screenshots
 ![Main UI](screenshots/wasd.png)
+
 ![singleKey Mode](screenshots/singleKey.png)
 
 ## 📦 Download
