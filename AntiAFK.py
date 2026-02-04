@@ -30,7 +30,7 @@ keyWaitTime = 15
 wasdKeys = ["w","a","s","d"]
 #------------------------------
 startButtonText = ctk.StringVar()
-startButtonText.set("Go AFK")
+startButtonText.set("Go AFK (F8)")
 mode = ctk.StringVar(value="wasd")
 AFK = False
 #COLORS
@@ -248,8 +248,8 @@ def afk_loop():
          "singleKey": single_key,
          "minimalMovement": minimal_movement    
     }
-
-    while True:
+    
+    while True: 
         if AFK:
             modo_actual = mode.get()
             if modo_actual in modos:
@@ -262,6 +262,13 @@ def set_mode(m):
     mode.set(m)
     update_mode_buttons()
 
+def hotkey_listener():
+    global AFK
+    while True:
+        keyboard.wait("F8")
+        irseAFK()
+        time.sleep(0.4)
+
 #Logica boton
 def irseAFK():
     global AFK
@@ -269,7 +276,7 @@ def irseAFK():
     global startButton
     if not AFK:
         AFK = True
-        startButtonText.set("Stop")
+        startButtonText.set("Stop (F8)")
         startButton.configure(
             fg_color=startButtonColorON,
             border_color="#FF4D4D",
@@ -279,7 +286,7 @@ def irseAFK():
         )
     else:
         AFK = False
-        startButtonText.set("Go AFK")
+        startButtonText.set("Go AFK (F8)")
         startButton.configure(
             fg_color=startButtonColorOFF, 
             text_color=startButtonTextColorOFF,
@@ -287,6 +294,7 @@ def irseAFK():
             border_width=2,
             hover_color=startButtonColorOFF
         )
+
 
 
 #Tkinter
@@ -473,7 +481,7 @@ def create_recordKey_Frame(master, title_text, comando, width=400, height=300):
 # - WASD frames -
 wasdInfoText = create_info_frame(
     master=wasd_frame,
-    text="This mode press WASD keys randomly to move the character.\nYou can modify the delay from key to key and how much time that key is gonna be pressed."
+    text="This mode presses WASD keys randomly to move the character.\nYou can modify the delay from key to key and how much time said key is gonna be pressed."
 )
 wasdDelayFrame, wasdDelayMin, wasdDelayMax = create_option_frame(
     master=wasd_frame, 
@@ -557,4 +565,5 @@ minimalMoveButton.pack(pady=6)
 show_frame(wasd_frame) #Para que la primera TAB que aparezca sea la de WASD
 update_mode_buttons() #Para que aparezca seleccionado el WASD al abrir el programa
 threading.Thread(target=afk_loop, daemon=True).start() #Para que funcione todo junto, no se como funciona
+threading.Thread(target=hotkey_listener, daemon=True).start()
 window.mainloop()
